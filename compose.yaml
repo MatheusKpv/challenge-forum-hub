@@ -1,10 +1,14 @@
 services:
   mysql:
-    image: 'mysql:latest'
+    image: mysql:8.0
+    container_name: challenge-forum-hub-mysql-db
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      MYSQL_DATABASE: challenge_forum_hub
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - '3306'
+      - '5432:5432'
+    volumes:
+      - mysql_data:/var/lib/mysql/data
+
+volumes:
+  mysql_data:
