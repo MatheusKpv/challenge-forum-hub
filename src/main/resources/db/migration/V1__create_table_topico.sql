@@ -4,7 +4,7 @@ CREATE TABLE topico
     titulo       VARCHAR(255) NOT NULL,
     mensagem     TEXT         NOT NULL,
     data_criacao TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    estado       ENUM('aberto', 'fechado', 'pendente') NOT NULL DEFAULT 'aberto',
+    estado       ENUM('ABERTO', 'FECHADO', 'PENDENTE') NOT NULL DEFAULT 'ABERTO',
     autor        VARCHAR(100) NOT NULL,
     curso        VARCHAR(100) NOT NULL
 );

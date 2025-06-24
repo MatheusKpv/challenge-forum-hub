@@ -1,0 +1,34 @@
+package com.one.challengeforumhub.service;
+
+import com.one.challengeforumhub.domain.Topico;
+import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
+import com.one.challengeforumhub.exception.TopicoDuplicadoException;
+import com.one.challengeforumhub.repository.TopicoRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class TopicoService {
+
+    private final TopicoRepository topicoRepository;
+
+    public TopicoService(TopicoRepository topicoRepository) {
+        this.topicoRepository = topicoRepository;
+    }
+
+    public Topico criarTopico(final CriarTopicoRequestDto dto) {
+        final var topico = new Topico(dto);
+        final var existeDuplicado = topicoRepository.existsTopicoByTituloIgnoreCaseAndMensagemIgnoreCase(topico.getTitulo(), topico.getMensagem());
+
+        if (existeDuplicado) {
+            throw new TopicoDuplicadoException("Já existe um tópico com esse título e mensagem.");
+        }
+
+        return topicoRepository.save(topico);
+    }
+
+    public Page<Topico> listarTodos(final Pageable pageable) {
+        return topicoRepository.findAll(pageable);
+    }
+}
