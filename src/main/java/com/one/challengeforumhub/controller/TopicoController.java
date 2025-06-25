@@ -28,6 +28,12 @@ public class TopicoController {
         return ResponseEntity.ok(page);
     }
 
+    @GetMapping("{id}")
+    public ResponseEntity<TopicoDetalhadoDto> listarTopico(@PathVariable Long id) {
+        final var topicoDto = topicoService.buscarPorId(id);
+        return ResponseEntity.ok(topicoDto);
+    }
+
     @PostMapping
     public ResponseEntity<TopicoDetalhadoDto> criarTopico(@RequestBody @Valid CriarTopicoRequestDto dto, UriComponentsBuilder uriBuilder) {
         final var topico = topicoService.criarTopico(dto);
