@@ -1,6 +1,5 @@
 package com.one.challengeforumhub.controller;
 
-import com.one.challengeforumhub.domain.Topico;
 import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
 import com.one.challengeforumhub.dto.TopicoDetalhadoDto;
 import com.one.challengeforumhub.service.TopicoService;
@@ -23,15 +22,16 @@ public class TopicoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Topico>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Page<TopicoDetalhadoDto>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
         final var page = topicoService.listarTodos(pageable);
-        return ResponseEntity.ok(page);
+        final var pageDto = page.map(TopicoDetalhadoDto::new);
+        return ResponseEntity.ok(pageDto);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<TopicoDetalhadoDto> listarTopico(@PathVariable Long id) {
-        final var topicoDto = topicoService.buscarPorId(id);
-        return ResponseEntity.ok(topicoDto);
+        final var topico = topicoService.buscarPorId(id);
+        return ResponseEntity.ok(new TopicoDetalhadoDto(topico));
     }
 
     @PostMapping
@@ -42,5 +42,11 @@ public class TopicoController {
         final var response = new TopicoDetalhadoDto(topico);
 
         return ResponseEntity.created(uri).body(response);
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<TopicoDetalhadoDto> alterarTopico(@PathVariable Long id, @RequestBody @Valid CriarTopicoRequestDto dto) {
+        final var topicoAtualizado = topicoService.alterarTopico(id, dto);
+        return ResponseEntity.ok(new TopicoDetalhadoDto(topicoAtualizado));
     }
 }

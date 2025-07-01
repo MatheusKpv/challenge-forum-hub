@@ -34,11 +34,29 @@ public class Topico {
 
     private String curso;
 
-    public Topico(CriarTopicoRequestDto dto) {
+    public Topico(final CriarTopicoRequestDto dto) {
         this.titulo = dto.titulo();
         this.mensagem = dto.mensagem();
         this.estado = EnumEstado.ABERTO;
         this.autor = dto.autor();
         this.curso = dto.curso();
+    }
+
+    public void alterar(final CriarTopicoRequestDto dto) {
+        if (dto.titulo() != null) {
+            this.titulo = dto.titulo();
+        }
+
+        if (dto.mensagem() != null) {
+            this.mensagem = dto.mensagem();
+        }
+
+        if (dto.autor() != null) {
+            this.autor = dto.autor();
+        }
+
+        if (dto.curso() != null) {
+            this.curso = dto.curso();
+        }
     }
 }

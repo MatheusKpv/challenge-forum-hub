@@ -2,10 +2,10 @@ package com.one.challengeforumhub.service;
 
 import com.one.challengeforumhub.domain.Topico;
 import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
-import com.one.challengeforumhub.dto.TopicoDetalhadoDto;
 import com.one.challengeforumhub.exception.TopicoDuplicadoException;
 import com.one.challengeforumhub.exception.TopicoInexistenteException;
 import com.one.challengeforumhub.repository.TopicoRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,9 +34,16 @@ public class TopicoService {
         return topicoRepository.findAll(pageable);
     }
 
-    public TopicoDetalhadoDto buscarPorId(final Long id) {
+    public Topico buscarPorId(final Long id) {
         return topicoRepository.findById(id)
-                .map(TopicoDetalhadoDto::new)
                 .orElseThrow(() -> new TopicoInexistenteException("Tópico com ID " + id + " não encontrado."));
+    }
+
+    @Transactional
+    public Topico alterarTopico(final Long id, final CriarTopicoRequestDto dto) {
+        final var topico = this.buscarPorId(id);
+        topico.alterar(dto);
+
+        return topico;
     }
 }
