@@ -1,10 +1,10 @@
-package com.one.challengeforumhub.dto;
+package com.one.challengeforumhub.dto.topico;
 
 import com.one.challengeforumhub.domain.Topico;
 
 import java.time.LocalDateTime;
 
-public record TopicoDetalhadoDto(
+public record TopicoResponseDto(
         String titulo,
         String mensagem,
         LocalDateTime dataCriacao,
@@ -12,7 +12,7 @@ public record TopicoDetalhadoDto(
         String autor,
         String curso
 ) {
-    public TopicoDetalhadoDto(final Topico topico) {
+    public TopicoResponseDto(final Topico topico) {
         this(
                 topico.getTitulo(),
                 topico.getMensagem(),

@@ -1,8 +1,8 @@
-package com.one.challengeforumhub.dto;
+package com.one.challengeforumhub.dto.topico;
 
 import jakarta.validation.constraints.NotEmpty;
 
-public record CriarTopicoRequestDto(
+public record TopicoRequestDto(
         @NotEmpty
         String titulo,
 

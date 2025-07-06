@@ -1,7 +1,7 @@
 package com.one.challengeforumhub.controller;
 
-import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
-import com.one.challengeforumhub.dto.TopicoDetalhadoDto;
+import com.one.challengeforumhub.dto.topico.TopicoRequestDto;
+import com.one.challengeforumhub.dto.topico.TopicoResponseDto;
 import com.one.challengeforumhub.service.TopicoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -22,31 +22,37 @@ public class TopicoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TopicoDetalhadoDto>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Page<TopicoResponseDto>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
         final var page = topicoService.listarTodos(pageable);
-        final var pageDto = page.map(TopicoDetalhadoDto::new);
+        final var pageDto = page.map(TopicoResponseDto::new);
         return ResponseEntity.ok(pageDto);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TopicoDetalhadoDto> listarTopico(@PathVariable Long id) {
+    public ResponseEntity<TopicoResponseDto> listarTopico(@PathVariable Long id) {
         final var topico = topicoService.buscarPorId(id);
-        return ResponseEntity.ok(new TopicoDetalhadoDto(topico));
+        return ResponseEntity.ok(new TopicoResponseDto(topico));
     }
 
     @PostMapping
-    public ResponseEntity<TopicoDetalhadoDto> criarTopico(@RequestBody @Valid CriarTopicoRequestDto dto, UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<TopicoResponseDto> criarTopico(@RequestBody @Valid TopicoRequestDto dto, UriComponentsBuilder uriBuilder) {
         final var topico = topicoService.criarTopico(dto);
 
         final var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
-        final var response = new TopicoDetalhadoDto(topico);
+        final var response = new TopicoResponseDto(topico);
 
         return ResponseEntity.created(uri).body(response);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<TopicoDetalhadoDto> alterarTopico(@PathVariable Long id, @RequestBody @Valid CriarTopicoRequestDto dto) {
+    public ResponseEntity<TopicoResponseDto> alterarTopico(@PathVariable Long id, @RequestBody @Valid TopicoRequestDto dto) {
         final var topicoAtualizado = topicoService.alterarTopico(id, dto);
-        return ResponseEntity.ok(new TopicoDetalhadoDto(topicoAtualizado));
+        return ResponseEntity.ok(new TopicoResponseDto(topicoAtualizado));
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> alterarTopico(@PathVariable Long id) {
+        topicoService.deletarPorId(id);
+        return ResponseEntity.noContent().build();
     }
 }

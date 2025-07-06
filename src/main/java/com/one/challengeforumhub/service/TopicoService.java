@@ -1,9 +1,9 @@
 package com.one.challengeforumhub.service;
 
 import com.one.challengeforumhub.domain.Topico;
-import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
+import com.one.challengeforumhub.dto.topico.TopicoRequestDto;
 import com.one.challengeforumhub.exception.TopicoDuplicadoException;
-import com.one.challengeforumhub.exception.TopicoInexistenteException;
+import com.one.challengeforumhub.exception.TopicoNaoEncontradoException;
 import com.one.challengeforumhub.repository.TopicoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -19,7 +19,7 @@ public class TopicoService {
         this.topicoRepository = topicoRepository;
     }
 
-    public Topico criarTopico(final CriarTopicoRequestDto dto) {
+    public Topico criarTopico(final TopicoRequestDto dto) {
         final var topico = new Topico(dto);
         final var existeDuplicado = topicoRepository.existsTopicoByTituloIgnoreCaseAndMensagemIgnoreCase(topico.getTitulo(), topico.getMensagem());
 
@@ -36,14 +36,25 @@ public class TopicoService {
 
     public Topico buscarPorId(final Long id) {
         return topicoRepository.findById(id)
-                .orElseThrow(() -> new TopicoInexistenteException("Tópico com ID " + id + " não encontrado."));
+                .orElseThrow(() -> new TopicoNaoEncontradoException("Tópico com ID " + id + " não encontrado."));
     }
 
     @Transactional
-    public Topico alterarTopico(final Long id, final CriarTopicoRequestDto dto) {
+    public Topico alterarTopico(final Long id, final TopicoRequestDto dto) {
         final var topico = this.buscarPorId(id);
         topico.alterar(dto);
 
         return topico;
+    }
+
+    public void deletarPorId(final Long id) {
+        verificaSeExistePorId(id);
+        topicoRepository.deleteById(id);
+    }
+
+    private void verificaSeExistePorId(final Long id) {
+        if (!topicoRepository.existsById(id)) {
+            throw new TopicoNaoEncontradoException("Tópico com ID " + id + " não encontrado.");
+        }
     }
 }

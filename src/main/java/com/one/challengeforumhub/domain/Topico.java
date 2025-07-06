@@ -1,6 +1,6 @@
 package com.one.challengeforumhub.domain;
 
-import com.one.challengeforumhub.dto.CriarTopicoRequestDto;
+import com.one.challengeforumhub.dto.topico.TopicoRequestDto;
 import com.one.challengeforumhub.enums.EnumEstado;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +34,7 @@ public class Topico {
 
     private String curso;
 
-    public Topico(final CriarTopicoRequestDto dto) {
+    public Topico(final TopicoRequestDto dto) {
         this.titulo = dto.titulo();
         this.mensagem = dto.mensagem();
         this.estado = EnumEstado.ABERTO;
@@ -42,7 +42,7 @@ public class Topico {
         this.curso = dto.curso();
     }
 
-    public void alterar(final CriarTopicoRequestDto dto) {
+    public void alterar(final TopicoRequestDto dto) {
         if (dto.titulo() != null) {
             this.titulo = dto.titulo();
         }
