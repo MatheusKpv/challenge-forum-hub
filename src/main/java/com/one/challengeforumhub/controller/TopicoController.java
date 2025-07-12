@@ -1,6 +1,7 @@
 package com.one.challengeforumhub.controller;
 
 import com.one.challengeforumhub.dto.topico.TopicoRequestDto;
+import com.one.challengeforumhub.dto.topico.TopicoResponseDetalhadoDto;
 import com.one.challengeforumhub.dto.topico.TopicoResponseDto;
 import com.one.challengeforumhub.service.TopicoService;
 import jakarta.validation.Valid;
@@ -22,9 +23,9 @@ public class TopicoController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TopicoResponseDto>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<Page<TopicoResponseDetalhadoDto>> listarTopicos(@PageableDefault(size = 5, sort = "dataCriacao", direction = Sort.Direction.ASC) Pageable pageable) {
         final var page = topicoService.listarTodos(pageable);
-        final var pageDto = page.map(TopicoResponseDto::new);
+        final var pageDto = page.map(TopicoResponseDetalhadoDto::new);
         return ResponseEntity.ok(pageDto);
     }
 
