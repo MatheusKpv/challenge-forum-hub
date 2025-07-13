@@ -33,4 +33,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest()
                 .body(new ErroValidacaoResponseDto("Dados inválidos", erros));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorMessageDto> handleException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessageDto(ex.getMessage()));
+    }
 }

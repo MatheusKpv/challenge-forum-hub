@@ -1,7 +1,8 @@
 package com.one.challengeforumhub.security;
 
-import com.one.challengeforumhub.service.UserDetailService;
+import com.one.challengeforumhub.exception.TokenInvalidoException;
 import com.one.challengeforumhub.service.TokenService;
+import com.one.challengeforumhub.service.UserDetailService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,17 +29,41 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
+        final var path = request.getServletPath();
+
+        if (path.equals("/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         final var authorizationHeader = request.getHeader("Authorization");
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             final var token = authorizationHeader.substring(7);
-            final var usernameUsuario = tokenService.verificarToken(token);
-            final var usuario = userDetailService.loadUserByUsername(usernameUsuario);
-            final var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            try {
+                final var usernameUsuario = tokenService.verificarToken(token);
+                final var usuario = userDetailService.loadUserByUsername(usernameUsuario);
+                final var authentication = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (TokenInvalidoException ex) {
+                responderErro(response, HttpServletResponse.SC_UNAUTHORIZED, ex.getMessage());
+                return;
+            }
+        } else {
+            responderErro(response, HttpServletResponse.SC_UNAUTHORIZED, "Token ausente");
+            return;
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void responderErro(final HttpServletResponse response, final int status, final String mensagem) throws IOException {
+        final var json = "{\"message\": \"" + mensagem + "\"}";
+
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.getWriter().write(json);
     }
 }

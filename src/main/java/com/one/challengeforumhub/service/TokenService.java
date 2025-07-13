@@ -2,7 +2,11 @@ package com.one.challengeforumhub.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.one.challengeforumhub.domain.Usuario;
+import com.one.challengeforumhub.exception.TokenInvalidoException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +27,18 @@ public class TokenService {
     }
 
     public String verificarToken(final String token) {
-        return JWT.require(getAlgorithm())
-                .build()
-                .verify(token)
-                .getSubject();
+        try {
+            return JWT.require(getAlgorithm())
+                    .build()
+                    .verify(token)
+                    .getSubject();
+        } catch (TokenExpiredException ex) {
+            throw new TokenInvalidoException("Token expirado");
+        } catch (SignatureVerificationException ex) {
+            throw new TokenInvalidoException("Assinatura do token inválida");
+        } catch (JWTVerificationException ex) {
+            throw new TokenInvalidoException("Token inválido");
+        }
     }
 
     private Algorithm getAlgorithm() {
