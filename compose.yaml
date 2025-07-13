@@ -1,16 +1,37 @@
 services:
   mysql:
     image: mysql:8.0
-    container_name: challenge-forum-hub-mysql-db
+    container_name: ${CONTAINER_NAME}
     environment:
       MYSQL_DATABASE: challenge_forum_hub
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: app_user
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - '3307:3306'
+      - '${MYSQL_PORT}:3306'
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: challenge-forum-hub-app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - '8181:8080'
+      - '5005:5005'
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_HOST=${CONTAINER_NAME}
+      - MYSQL_PORT=3306
+    restart: unless-stopped
 
 volumes:
   mysql_data:
