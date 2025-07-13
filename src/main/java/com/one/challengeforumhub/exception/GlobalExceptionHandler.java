@@ -17,8 +17,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessageDto(ex.getMessage()));
     }
 
-    @ExceptionHandler(TopicoNaoEncontradoException.class)
-    public ResponseEntity<ErrorMessageDto> handleTopicoNaoEncontrado(TopicoNaoEncontradoException ex) {
+    @ExceptionHandler(EntidadeNaoEncontradaException.class)
+    public ResponseEntity<ErrorMessageDto> handleTopicoNaoEncontrado(EntidadeNaoEncontradaException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessageDto(ex.getMessage()));
     }
 

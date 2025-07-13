@@ -3,7 +3,7 @@ package com.one.challengeforumhub.service;
 import com.one.challengeforumhub.domain.Topico;
 import com.one.challengeforumhub.dto.topico.TopicoRequestDto;
 import com.one.challengeforumhub.exception.TopicoDuplicadoException;
-import com.one.challengeforumhub.exception.TopicoNaoEncontradoException;
+import com.one.challengeforumhub.exception.EntidadeNaoEncontradaException;
 import com.one.challengeforumhub.repository.TopicoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -36,7 +36,7 @@ public class TopicoService {
 
     public Topico buscarPorId(final Long id) {
         return topicoRepository.findById(id)
-                .orElseThrow(() -> new TopicoNaoEncontradoException("Tópico com ID " + id + " não encontrado."));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Tópico com ID " + id + " não encontrado."));
     }
 
     @Transactional
@@ -54,7 +54,7 @@ public class TopicoService {
 
     private void verificaSeExistePorId(final Long id) {
         if (!topicoRepository.existsById(id)) {
-            throw new TopicoNaoEncontradoException("Tópico com ID " + id + " não encontrado.");
+            throw new EntidadeNaoEncontradaException("Tópico com ID " + id + " não encontrado.");
         }
     }
 }
