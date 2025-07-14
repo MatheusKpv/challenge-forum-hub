@@ -16,11 +16,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class AuthenticationConfig {
+public class SecurityConfig {
 
     private final SecurityFilter securityFilter;
 
-    public AuthenticationConfig(SecurityFilter securityFilter) {
+    public SecurityConfig(SecurityFilter securityFilter) {
         this.securityFilter = securityFilter;
     }
 
@@ -28,6 +28,11 @@ public class AuthenticationConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
