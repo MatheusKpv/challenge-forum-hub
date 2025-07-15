@@ -1,6 +1,5 @@
 package com.one.challengeforumhub.service;
 
-import com.one.challengeforumhub.exception.EntidadeNaoEncontradaException;
 import com.one.challengeforumhub.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,6 +18,6 @@ public class UserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return usuarioRepository.findByLogin(username)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Usuário não encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 }
