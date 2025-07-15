@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -30,8 +31,17 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         final var path = request.getServletPath();
+        final var caminhosIgnorados = List.of(
+                "/login",
+                "/swagger-ui",
+                "/swagger-ui/index.html",
+                "/v3/api-docs",
+                "/v3/api-docs/swagger-config"
+        );
 
-        if (path.equals("/login")) {
+        final var deveIgnorar = caminhosIgnorados.stream().anyMatch(path::startsWith);
+
+        if (deveIgnorar) {
             filterChain.doFilter(request, response);
             return;
         }
